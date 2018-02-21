@@ -1,0 +1,51 @@
+create index index1 on orderdetails(orderLineNumber)
+create index indice2 on orderdetails(quantityOrdered, orderLineNumber)
+create index indice3 on orderdetails(OrderLineNumber, quantityOrdered)
+create index indice4 on orderdetails(OrderLineNumber, quantityOrdered) using hash
+
+//index 1
+
+explain format = json select * from orderdetails force index(index1) where orderLineNumber = 1 and quantityOrdered > 50
+
+cost = 95.2
+
+
+explain format = json select productCode from orderdetails force index(index1) where orderLineNumber = 1 and quantityOrdered > 50
+
+cost = 95.2
+
+explain format = json select orderLineNumber, count(*) from orderdetails force index(index1) where orderLineNumber = 1 and quantityOrdered > 50
+
+cost = 95.2
+
+//index 2
+
+explain format = json select * from orderdetails force index(indice2) where orderLineNumber = 1 and quantityOrdered > 50
+
+cost = 93.41
+
+
+explain format = json select productCode from orderdetails force index(indice2) where orderLineNumber = 1 and quantityOrdered > 50
+
+cost = 27.62
+
+explain format = json select orderLineNumber, count(*) from orderdetails force index(indice2) where orderLineNumber = 1 and quantityOrdered > 50
+
+cost = 27.62
+
+//index 3
+
+explain format = json select * from orderdetails force index(indice3) where orderLineNumber = 1 and quantityOrdered > 50
+
+cost = 8.01
+
+
+explain format = json select productCode from orderdetails force index(indice3) where orderLineNumber = 1 and quantityOrdered > 50
+
+cost = 3.02
+
+explain format = json select orderLineNumber, count(*) from orderdetails force index(indice3) where orderLineNumber = 1 and quantityOrdered > 50 
+
+cost = 3.02
+
+//El costo va a depender de donde esten los valores que son un rango o sean un valor especifico, si los que son especificos estan del lado izquierdo, entonces es menos costoso.
